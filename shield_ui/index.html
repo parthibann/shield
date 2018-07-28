@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shield</title>
+    <meta name="author" content="Parthiban Nithyanantham">
+    <meta name="description" content="Generate SSL certificates with ease.">
+
+    <link rel="shortcut icon" type="image/png" href="static/images/favicon.ico"/>
+    <link rel='stylesheet prefetch' href='static/css/font-awesome.css'>
+    <link rel="stylesheet" type="text/css"  href="static/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/moment.js"></script>
+    <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/jquery.dataTables.css"/>
+    <script src="static/js/jquery.dataTables.min.js"></script>
+    <style>
+      html, body, .page {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  transition: all .6s cubic-bezier(.5, .2, .2, 1.1);
+  -webkit-transition: all .6s cubic-bezier(.5, .2, .2, 1.1);
+  -moz-transition: all .6s cubic-bezier(.5, .2, .2, 1.1);
+  -o-transition: all .6s cubic-bezier(.5, .2, .2, 1.1);
+  overflow: hidden;
+}
+
+* {
+  font-family: 'open sans', 'lato', 'helvetica', sans-serif;
+}
+
+.page {
+  position: absolute;
+}
+
+#p1 {
+  left: 0;
+}
+
+#p2, #p3, #p4, #p5 {
+  left: 200%;
+}
+
+#p3, #p2{
+    color:black;
+}
+
+#p1 { background: darkslateblue; }
+#p2 { background: white; }
+#p3 { background: white; }
+#p4 { background: deeppink; }
+#p5 { background: darkslateblue; }
+
+#t2:target #p2,
+#t3:target #p3,
+#t4:target #p4,
+#t5:target #p5 {
+  transform: translateX(-190%);
+  -webkit-transform: translateX(-190%);
+  -moz-transform: translateX(-190%);
+  -o-transform: translateX(-190%);
+  transition-delay: .4s !important;
+}
+
+#t2:target #p1,
+#t3:target #p1,
+#t4:target #p1,
+#t5:target #p1{
+  background: black;
+}
+
+#t2:target #p1 .icon,
+#t3:target #p1 .icon,
+#t4:target #p1 .icon,
+#t5:target #p1 .icon {
+  -webkit-filter: blur(3px);
+}
+
+.icon {
+  color: #fff;
+  font-size: 32px;
+  display: block;
+}
+
+.myul .icon:hover {
+  opacity: 0.5;
+}
+
+.page .icon .title {
+  line-height: 2;
+}
+
+#t2:target .myul .icon,
+#t3:target .myul .icon,
+#t4:target .myul .icon,
+#t5:target .myul .icon{
+  transform: scale(.6);
+  -webkit-transform: scale(.6);
+  -moz-transform: scale(.6);
+  -o-transform: scale(.6);
+  transition-delay: .25s;
+}
+
+#t2:target #dos,
+#t3:target #tres,
+#t4:target #cuatro,
+#t4:target #cinco {
+  transform: scale(1.2) !important;
+  -webkit-transform: scale(1.2) !important;
+  -moz-transform: scale(1.2) !important;
+  -o-transform: scale(1.2) !important;
+}
+
+.myul {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  height: 280px;
+  width: 10%;
+  padding: 0;
+  text-align: center;
+ }
+
+#menu .icon {
+  margin: 30px 0;
+  transition: all .5s ease-out !important;
+  -webkit-transition: all .5s ease-out;
+  -moz-transition: all .5s ease-out;
+  -o-transition: all .5s ease-out;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+.title, .hint {
+  display: block;
+}
+
+.title {
+  font-size: 38px;
+}
+
+.hint {
+  font-size: 13px;
+}
+
+#p4 .hint {
+  display: inherit !important;
+}
+
+.hint a {
+  color: yellow;
+  transition: all 250ms ease-out;
+  -webkit-transition: all 250ms ease-out;
+  -moz-transition: all 250ms ease-out;
+  -o-transition: all 250ms ease-out;
+}
+
+.hint a:hover {
+  color: #FFF;
+}
+
+.line-trough {
+  text-decoration: line-through;
+}
+
+.page .icon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 10%;
+  left: 0;
+  width: 270px;
+  height: 170px;
+  margin: auto;
+  text-align: center;
+  font-size: 80px;
+  line-height: 1.3;
+  transform: translateX(360%);
+  -webkit-transform: translateX(360%);
+  -moz-transform: translateX(360%);
+  -o-transform: translateX(360%);
+  transition: all .5s cubic-bezier(.25, 1, .5, 1.25);
+  -webkit-transition: all .5s cubic-bezier(.25, 1, .5, 1.25);
+  -moz-transition: all .5s cubic-bezier(.25, 1, .5, 1.25);
+  -o-transition: all .5s cubic-bezier(.25, 1, .5, 1.25);
+}
+
+.page#p1 .icon {
+  height: 220px;
+}
+
+.page#p1 .icon {
+  transform: translateX(10%) !important;
+}
+
+#t2:target .page#p2 .icon,
+#t3:target .page#p3 .icon,
+#t4:target .page#p4 .icon,
+#t5:target .page#p5 .icon {
+  transform: translateX(0) !important;
+  -webkit-transform: translateX(0) !important;
+  -moz-transform: translateX(0) !important;
+  -o-transform: translateX(0) !important;
+  transition-delay: 1s;
+}
+
+
+    </style>
+    <script>
+        $(document).ready(function () {
+
+    var table = $('#cert_table').DataTable({
+        dom: "Bfrtip",
+        bInfo: true,
+        bPaginate: true,
+        searching: true,
+        processing: true,
+        paging: true,
+        pageLength: 10,
+        ajax: function ( data, callback, settings ) {
+
+            $.ajax({
+                url: '/v1/certifiates?',
+                // dataType: 'text',
+                type: 'get',
+                contentType: 'application/json',
+                data: {
+                    limit: data.length,
+                    skip_val: data.start
+                },
+                success: function( data, textStatus, jQxhr ){
+                    callback({
+                        // draw: data.draw,
+                        recordsTotal:  data.recordsTotal,
+                        recordsFiltered:  data.recordsTotal,
+                        data: data.data.certificates
+                    });
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                        alert("Error getting certificate list.");
+                }
+            });
+        },
+        serverSide: false,
+        columns: [
+            { "data": "common_name" },
+            { "data": "cert_type" },
+            { "data": "signature_algorithm" },
+            { "data": "valid_from" },
+            { "data": "valid_till" },
+            { "data": null,
+                "render": function(data, type, full, meta){
+                    if(type === 'display'){
+                        data = '<a href="/v1/certificates/download/private_key/' + data.key_id +'"><i title="Private key" style="color:red;" class="fa fa-key" aria-hidden="true"></i></a>&nbsp&nbsp&nbsp<a href="/v1/certificates/download/public_key/' + data.key_id +'"><i title="Public key" class="fa fa-key" aria-hidden="true"></i></a>&nbsp&nbsp&nbsp<a href="/v1/certificates/download/cert/' + data.id +'"><i style="color:green;font-size: 25px;" title="Certificate" class="fa fa-keyboard-o" aria-hidden="true"></i></a>';
+                    }
+                     return data;
+                }
+            }
+
+        ]
+
+    });
+
+});
+    </script>
+    <script type="text/javascript">
+        jQuery('#dp1').on('change', function() {
+            if(jQuery(this).val().length == 0) {
+                jQuery('#intervall').prop('disabled', true);
+            }else{
+                jQuery('#intervall').prop('disabled', false);
+            }
+        })
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            var calist;
+            $.ajax({
+                url: '/v1/certifiates?action=calist',
+                type: 'get',
+                contentType: 'application/json',
+                success: function(data) {
+                    calist = data;
+                }
+            });
+            $('select[name="cert_type"]').change(function() {
+                var options = '';
+                $.each(calist[$(this).val()] || [], function(i, v) {
+                    options += '<option value=' + v.id + '>' + v.name + '</option>';
+                });
+                $('select[name="issuer_id"]').html(options);
+                var disable_list = $(this).val();
+                if (disable_list == 'self_signed' || disable_list == 'ca_root'){
+                    $("select[name=issuer_id]").attr("disabled", true);
+                }
+                else {
+                    $("select[name=issuer_id]").removeAttr("disabled");
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            $('#certform').submit(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/v1/certifiates',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    async: false,
+                    cache: false,
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(response) {
+                        alert(response.message);
+                    },
+                });
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            $('#vtilldate').datetimepicker({
+            format: 'YYYY-MM-DDTHH:mm:ss'
+        });
+        $("#clearSchedulevtill").click(function(){
+            $("#valid_till").val('');
+        });
+        });
+    </script>
+    <script type="text/javascript">
+    $(function(){
+        $('#vfromdate').datetimepicker({
+            format: 'YYYY-MM-DDTHH:mm:ss'
+        });
+        $("#clearSchedulevfrom").click(function(){
+            $("#valid_from").val('');
+        });
+    });
+    </script>
+
+</head>
+
+<body>
+
+  <div class="ct" id="t1">
+  <div class="ct" id="t2">
+    <div class="ct" id="t3">
+      <div class="ct" id="t4">
+         <div class="ct" id="t5">
+          <ul id="menu" class="myul">
+            <a href="#t1"><li class="icon fa fa-bolt" id="uno"></li></a>
+            <a href="#t2"><li class="icon fa fa-keyboard-o" id="dos"></li></a>
+            <a href="#t3"><li class="icon fa fa-download" id="tres"></li></a>
+            <!-- <a href="#t4"><li class="icon fa fa-dribbble" id="cuatro"></li></a> -->
+            <a href="#t5"><li class="icon fa fa-thumbs-up" id="cinco"></li></a>
+          </ul>
+          <div class="page" id="p1">
+             <section class="icon fa fa-bolt"><span class="title">Shield</span><span class="hint">Create keys, organizational certificate chain<br> and SSL certificates</span></section>
+          </div>
+          <div class="page" id="p2">
+            <section style="margin-right:170px;margin-left:10px;padding-top:30px;">
+                <form id="certform">
+                <div class="form-group row">
+                    <label for="common_name" class="col-sm-2 col-form-label">Certificate Name: </label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="common_name" name="common_name" placeholder="Enter certificate name" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="cert_type" class="col-sm-2 col-form-label">Certificate Type: </label>
+                    <div class="col-xs-4">
+                        <select id="cert_type" name="cert_type" class="form-control">
+                            <option value="self_signed">Self Signed</option>
+                            <option value="ca_root">CA Root</option>
+                            <option value="ca_intermediate">CA Intermediate</option>
+                            <option value="end_entity">End Entity</option>
+                        </select>
+                    </div>
+                </div>
+                    <div class="form-group row">
+                    <label for="issuer_id" class="col-sm-2 col-form-label">Certificate Issuer: </label>
+                    <div class="col-xs-4">
+                        <select id="issuer_id" name="issuer_id" class="form-control" disabled="disabled">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="valid_from" class="col-sm-2 col-form-label">Valid From: </label>
+			        <div class="col-xs-4">
+			            <div class="form-group" >
+                            <div class='input-group date' id="vfromdate">
+                                <input id="valid_from" name="valid_from" type='text' class="form-control" placeholder="Select valid from" value="" readonly/>
+                                <span id="calenderIcon" class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <span id="clearSchedulevfrom" class="input-group-addon">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="valid_till" class="col-sm-2 col-form-label">Valid Till: </label>
+			        <div class="col-xs-4">
+			            <div class="form-group">
+                            <div class='input-group date' id="vtilldate">
+                                <input id="valid_till" name="valid_till" type='text' class="form-control" placeholder="Select valid till" readonly/>
+                                <span id="calenderIconvtill" class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <span id="clearSchedulevtill" class="input-group-addon">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="path_length" class="col-sm-2 col-form-label">Path length: </label>
+                    <div class="col-xs-4">
+                        <input type="number" class="form-control" id="path_length" name="path_length" placeholder="e.g: 0">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-sm-2 col-form-label">Country: </label>
+                    <div class="col-xs-4">
+                        <input type="text" maxlength="2" class="form-control" id="country" name="country" placeholder="e.g: IN">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="state" class="col-sm-2 col-form-label">State: </label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="state" name="state" placeholder="e.g: Tamilnadu">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="locality" class="col-sm-2 col-form-label">Locality: </label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="locality" name="locality" placeholder="e.g: Chennai">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="organization_name" class="col-sm-2 col-form-label">Organization Name: </label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="organization_name" name="organization_name" placeholder="Enter organization name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="organization_unit_name" class="col-sm-2 col-form-label">Organization Unit Name: </label>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="organization_unit_name" name="organization_unit_name" placeholder="Enter organization unit name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="signature_algorithm" class="col-sm-2 col-form-label">Signature Algorithm: </label>
+                    <div class="col-xs-4">
+                        <select id="signature_algorithm" name="signature_algorithm" class="form-control">
+                            <option value="sha256">Sha256</option>
+                            <option value="sha1">Sha1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-offset-2 col-xs-10">
+                    <button id="create_cert" name="create_cert" type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </section>
+          </div>
+          <div class="page" id="p3">
+            <section style="margin-right:170px;margin-left:10px;padding-top:30px;">
+              <table id="cert_table" class="table">
+                <thead>
+                    <tr>
+                        <th>Certificate Name</th>
+                        <th>Certificate Type</th>
+                        <th>Algorithm</th>
+                        <th>Valid From</th>
+                        <th>Valid Till</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+              </table>
+            </section>
+          </div>
+          <div class="page" id="p4">
+            <section class="icon fa fa-dribbble">
+              <span class="title">View Certificate Details</span>
+              <p class="hint">
+                <a href="#" target="_blank">Select Certificates.</a>
+              </p>
+            </section>
+          </div>
+          <div class="page" id="p5">
+            <section class="icon fa fa-thumbs-up">
+              <span class="title">Thank you</span>
+              <p class="hint">
+                <span>Follow us on <a href="https://twitter.com/NParthibann" target="_blank">Twitter</a>, <a href="https://github.com/parthibann" target="_blank">Github</a></span><br/>
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>
