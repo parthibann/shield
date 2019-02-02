@@ -461,8 +461,8 @@ class CertificateActions(object):
                               crl_sign=True, encipher_only=True, decipher_only=True), critical=True)
         else:
             builder = builder.add_extension(
-                x509.KeyUsage(digital_signature=False, content_commitment=False, key_encipherment=True,
-                              data_encipherment=True, key_agreement=False, key_cert_sign=False,
+                x509.KeyUsage(digital_signature=True, content_commitment=False, key_encipherment=True,
+                              data_encipherment=False, key_agreement=False, key_cert_sign=False,
                               crl_sign=False, encipher_only=False, decipher_only=False), critical=True)
         builder = builder.add_extension(x509.BasicConstraints(ca=ca, path_length=path_length), critical=True, )
         certificate = builder.sign(private_key=issuer_key, algorithm=alg, backend=default_backend())
