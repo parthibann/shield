@@ -1,0 +1,8 @@
+version: '3'
+services:
+    mongo-server:
+        image: mongo
+    shield:
+        build: .
+        ports:
+            - "5050:5050"
