@@ -15,6 +15,22 @@ Enter certificate details in shield UI and download the certificate in just one 
  2. Move inside the repository folder and run the following command “pip install –r requirements.txt”
  3. Update config file with mongo db details “shield.conf”
  4. Start the application by running the “shield” file present in the bin directory (e.g python shield)
+ 
+ **DOCKER:**
+ 1. INSTALL DOCKER AND DOCKER-COMPOSE, refer official docker installation page for installing docker and docker-compose.
+ 
+ Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/#set-up-the-repository (ubuntu)
+ 
+ Docker-Compose: https://docs.docker.com/compose/install/#install-compose (ubuntu)
+ 
+ 2. After instaling, clone this repository and go inside the project directory and run the command mentioned below.
+ 
+
+    cd shield
+
+    sudo docker-compose up
+ 
+ 3. open browser and load https://localhost:5050
 
 **API DOCUMENT:** Document is added as part of the repository and it is present in the documents directory.
 
