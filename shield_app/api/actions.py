@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import ipaddress
 from bson import ObjectId
 from collections import OrderedDict
 from cryptography import x509
@@ -90,8 +91,14 @@ class ValidateSchema(object):
 
     def subject_alternate_name(self):
         field_name = 'subject_alternate_name'
-        sub_alt_name = self.data.get(field_name)
-        return str(sub_alt_name) if sub_alt_name else sub_alt_name
+        if field_name not in self.data or not self.data[field_name]:
+            sub_alt_name = {"ip_address": "", "dns": ""}
+        elif not isinstance(self.data[field_name], dict):
+            raise Exception('Incorrect subject_alternate_name format, should be '
+                            '{"ip_address": "<comma separated values>", "dns": "<comma separated values>"}')
+        else:
+            sub_alt_name = self.data[field_name]
+        return sub_alt_name
 
     def ca(self):
         certificate_type = self.cert_type()
@@ -410,10 +417,17 @@ class CertificateActions(object):
             alg = hashes.SHA256()
         else:
             alg = hashes.SHA1()
-        if not subject_alt_name:
-            subject_alt_name = [common_name]
-        if not isinstance(subject_alt_name, list):
-            subject_alt_name = [subject_alt_name]
+        dns_details = subject_alt_name.get("dns")
+        ip_details = subject_alt_name.get("ip_address")
+        if dns_details:
+            san_dns_details = dns_details.split(",")
+        else:
+            san_dns_details = []
+        if ip_details:
+            san_ip_details = ip_details.split(",")
+        else:
+            san_ip_details = []
+        san_dns_details.append(common_name)
         private_key = load_pem_private_key(private_key, None, default_backend())
         if not issuer_key:
             issuer_key = private_key
@@ -451,9 +465,15 @@ class CertificateActions(object):
         builder = builder.not_valid_after(end_time)
         builder = builder.serial_number(x509.random_serial_number())
         builder = builder.public_key(public_key)
-        for each_alt_name in subject_alt_name:
-            builder = builder.add_extension(x509.SubjectAlternativeName(
-                [x509.DNSName(unicode(each_alt_name, "utf-8"))]), critical=False)
+
+        san_details = []
+        for each_alt_name in san_dns_details:
+            san_details.append(x509.DNSName(unicode(each_alt_name)))
+        for each_ip_addr in san_ip_details:
+            ip_address = ipaddress.IPv4Address(unicode(each_ip_addr))
+            san_details.append(x509.IPAddress(ip_address))
+        builder = builder.add_extension(x509.SubjectAlternativeName(san_details), critical=False)
+
         if ca:
             builder = builder.add_extension(
                 x509.KeyUsage(digital_signature=True, content_commitment=True, key_encipherment=True,
