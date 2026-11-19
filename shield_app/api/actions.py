@@ -179,7 +179,7 @@ class CertificateActions(object):
             key_id = self.create_and_save_keypair(key_name)
             keypair_query = {'_id': ObjectId(key_id)}
             key_details = self.keypair_db.get_keypair(keypair_query)
-            keypair = str(key_details.get('keypair'))
+            keypair = key_details.get('keypair')
             certificate_type = data.cert_type()
             ca = data.ca()
             issuer_id = data.issuer_id()
@@ -190,13 +190,13 @@ class CertificateActions(object):
                 issuer_query = dict()
                 issuer_query['_id'] = ObjectId(issuer_id)
                 issuer_details = self.certificate_db.get_certificate(issuer_query)
-                issuer_crt = str(issuer_details.get('certificate'))
+                issuer_crt = issuer_details.get('certificate')
                 issuer_key_id = str(issuer_details.get('key_id'))
             if issuer_key_id:
                 issuer_key_query = dict()
                 issuer_key_query['_id'] = ObjectId(issuer_key_id)
                 issuer_key_details = self.keypair_db.get_keypair(issuer_key_query)
-                issuer_key = str(issuer_key_details.get('keypair'))
+                issuer_key = issuer_key_details.get('keypair')
             cert = self.create_certificate(common_name=data.common_name(), private_key=keypair,
                                            start_time=data.valid_from(), locality=data.locality(),
                                            org_name=data.organization_name(), ca=ca, end_time=data.valid_till(),
@@ -229,8 +229,8 @@ class CertificateActions(object):
                             id=str(cert_id))
             return [status, json.dumps(res_body)]
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def view(self, cert_id):
         try:
@@ -264,8 +264,8 @@ class CertificateActions(object):
                                 message='Certificate not found.')
             return [status, json.dumps(res_body)]
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def get_calist(self):
         ca_details = dict()
@@ -299,7 +299,7 @@ class CertificateActions(object):
         page = 0
         cert_list = list()
         try:
-            total_certificates = self.certificate_db.get_certificates({}).count()
+            total_certificates = self.certificate_db.count_certificates({})
             if request_args:
                 skip_val = int(request_args.get('skip_val', 0))
                 page = int(request_args.get('page', 0))
@@ -337,8 +337,8 @@ class CertificateActions(object):
                             data=dict(certificates=cert_list))
             return [status, json.dumps(res_body)]
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def delete(self, cert_id):
         try:
@@ -358,8 +358,8 @@ class CertificateActions(object):
                                 message='Certificate not found.')
             return [status, json.dumps(res_body)]
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def create_keypair(self, key_length=2048):
         """
@@ -437,17 +437,17 @@ class CertificateActions(object):
         builder = x509.CertificateBuilder()
 
         subject_details = list()
-        subject_details.append(x509.NameAttribute(NameOID.COMMON_NAME, unicode(common_name, "utf-8")))
+        subject_details.append(x509.NameAttribute(NameOID.COMMON_NAME, str(common_name)))
         if country:
-            subject_details.append(x509.NameAttribute(NameOID.COUNTRY_NAME, unicode(country, "utf-8")))
+            subject_details.append(x509.NameAttribute(NameOID.COUNTRY_NAME, str(country)))
         if state:
-            subject_details.append(x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, unicode(state, "utf-8")))
+            subject_details.append(x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, str(state)))
         if locality:
-            subject_details.append(x509.NameAttribute(NameOID.LOCALITY_NAME, unicode(locality, "utf-8")))
+            subject_details.append(x509.NameAttribute(NameOID.LOCALITY_NAME, str(locality)))
         if org_name:
-            subject_details.append(x509.NameAttribute(NameOID.ORGANIZATION_NAME, unicode(org_name, "utf-8")))
+            subject_details.append(x509.NameAttribute(NameOID.ORGANIZATION_NAME, str(org_name)))
         if org_unit_name:
-            subject_details.append(x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, unicode(org_unit_name, "utf-8")))
+            subject_details.append(x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, str(org_unit_name)))
 
         builder = builder.subject_name(x509.Name(subject_details))
 
@@ -468,9 +468,9 @@ class CertificateActions(object):
 
         san_details = []
         for each_alt_name in san_dns_details:
-            san_details.append(x509.DNSName(unicode(each_alt_name)))
+            san_details.append(x509.DNSName(str(each_alt_name)))
         for each_ip_addr in san_ip_details:
-            ip_address = ipaddress.IPv4Address(unicode(each_ip_addr))
+            ip_address = ipaddress.IPv4Address(str(each_ip_addr))
             san_details.append(x509.IPAddress(ip_address))
         builder = builder.add_extension(x509.SubjectAlternativeName(san_details), critical=False)
 
@@ -546,20 +546,20 @@ class CertificateActions(object):
         :param resource_type: cert / public_key / private_key
         :return: certificate
         """
-        data = ''
+        data = b''
         if resource_type == 'cert':
             resource = self.certificate_db.get_certificate({'_id': ObjectId(resource_id)})
             if resource:
-                data = str(resource.get('certificate'))
-        elif'key' in resource_type:
+                data = resource.get('certificate')
+        elif 'key' in resource_type:
             resource = self.keypair_db.get_keypair({'_id': ObjectId(resource_id)})
             if resource:
                 if resource_type == 'private_key':
-                    data = str(resource.get('keypair'))
+                    data = resource.get('keypair')
                 elif resource_type == 'public_key':
-                    data = str(resource.get('public_key'))
+                    data = resource.get('public_key')
                 else:
                     raise Exception("Invalid type")
         else:
             raise Exception("Specified resource %s of type %s not found" % (str(resource_id), resource_type))
-        return data
+        return data if isinstance(data, bytes) else data.encode('utf-8')

@@ -1,7 +1,7 @@
 from flask_restful import request
 from flask_restful import Resource
 from flask import send_file
-import StringIO
+from io import BytesIO
 
 from shield_app.utils.route_utils import error_handler
 from shield_app.utils.route_utils import get_response
@@ -21,8 +21,7 @@ class Certificate(Resource):
             status, res_body = self.actions.create(req_body)
             return get_response(status, res_body)
         except Exception as e:
-            print e.message
-            return error_handler(e.message)
+            return error_handler(str(e))
 
     def get(self, certid=None, type=None, resource_id=None):
         try:
@@ -42,20 +41,17 @@ class Certificate(Resource):
                     filename = 'public_key.pem'
                 else:
                     filename = 'error'
-                strIO = StringIO.StringIO()
                 data = self.actions.download(resource_id, type)
-                strIO.write(data)
-                strIO.seek(0)
-                return send_file(strIO, attachment_filename=filename, as_attachment=True)
+                return send_file(BytesIO(data), download_name=filename, as_attachment=True)
             else:
                 status, res_body = self.actions.list(request.args)
             return get_response(status, res_body)
         except Exception as e:
-            return error_handler(e.message)
+            return error_handler(str(e))
 
     def delete(self, certid):
         try:
             status, res_body = self.actions.delete(certid)
             return get_response(status, res_body)
         except Exception as e:
-            return error_handler(e.message)
+            return error_handler(str(e))
