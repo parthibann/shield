@@ -1,7 +1,4 @@
 flask
 flask_restful
 cryptography
-HTMLParser
 pymongo
-configparser
-ipaddress

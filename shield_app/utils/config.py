@@ -23,10 +23,10 @@ class Config(object):
             database['username'] = self.config.get("database", "username")
             database['password'] = self.config.get("database", "password")
             database['auth_database'] = self.config.get("database", "auth_database")
-        except NoOptionError, NoSectionError:
+        except(NoOptionError, NoSectionError):
             database['username'] = None
             database['password'] = None
             database['auth_database'] = None
         except Exception as error:
-            raise Exception(error.message)
+            raise Exception(str(error))
         return database

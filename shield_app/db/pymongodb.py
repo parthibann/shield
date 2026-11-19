@@ -1,4 +1,4 @@
-import urllib
+from urllib.parse import quote_plus
 import logging
 import datetime
 from bson import ObjectId
@@ -19,7 +19,7 @@ def mongo_connect():
     db_name = DB_CONFIG.get('database_name')
     auth_database = DB_CONFIG.get('auth_database')
     if username and password and auth_database:
-        uri = "mongodb://%s:%s@%s:%s/%s" % (username, urllib.quote_plus(password), host, port, auth_database)
+        uri = "mongodb://%s:%s@%s:%s/%s" % (username, quote_plus(password), host, port, auth_database)
     else:
         uri = "mongodb://%s:%s" % (host, port)
     conn = MongoClient(uri)
@@ -32,12 +32,12 @@ class KeypairDBAPI(object):
         try:
             conn, client = mongo_connect()
             data['created_at'] = datetime.datetime.utcnow()
-            result = client.keypair.insert(data)
+            result = client.keypair.insert_one(data).inserted_id
             conn.close()
             return result
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def get_keypair(self, query):
         try:
@@ -46,21 +46,31 @@ class KeypairDBAPI(object):
             conn.close()
             return result
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
 
 class CertificatesDBAPI(object):
+    def count_certificates(self, query):
+        try:
+            conn, client = mongo_connect()
+            result = client.certificate.count_documents(query)
+            conn.close()
+            return result
+        except Exception as e:
+            LOG.error(str(e))
+            raise
+
     def create_certificates(self, data):
         try:
             conn, client = mongo_connect()
             data['created_at'] = datetime.datetime.utcnow()
-            result = client.certificate.insert(data)
+            result = client.certificate.insert_one(data).inserted_id
             conn.close()
             return result
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def get_certificate(self, query):
         try:
@@ -69,28 +79,28 @@ class CertificatesDBAPI(object):
             conn.close()
             return result
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise
 
     def get_certificates(self, query, skip_val=0, limit=None):
         try:
             conn, client = mongo_connect()
             if limit:
-                result = client.certificate.find(query).skip(skip_val).limit(limit).sort("_id", -1)
+                result = list(client.certificate.find(query).skip(skip_val).limit(limit).sort("_id", -1))
             else:
-                result = client.certificate.find(query).sort("_id", -1)
+                result = list(client.certificate.find(query).sort("_id", -1))
             conn.close()
             return result
-        except Exception as error:
-            LOG.error(error.message)
-            raise Exception(error.message)
+        except Exception as e:
+            LOG.error(str(e))
+            raise
 
     def delete(self, cert_id, data):
         try:
             conn, client = mongo_connect()
-            result = client.certificate.update({'_id': ObjectId(cert_id)}, {"$set": data})
+            result = client.certificate.update_one({'_id': ObjectId(cert_id)}, {"$set": data})
             conn.close()
             return result
         except Exception as e:
-            LOG.error(e.message)
-            raise Exception(e.message)
+            LOG.error(str(e))
+            raise

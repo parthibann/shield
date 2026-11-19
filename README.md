@@ -5,16 +5,16 @@ Enter certificate details in shield UI and download the certificate in just one 
 
 **OPERATING SYSTEM PREFERRED:** Ubuntu, Centos
 
-**PYTHON VERSION:** 2.7
+**PYTHON VERSION:** 3.11
 
 **PREREQUISITE:** Mongodb
 
 **INSTALLATION INSTRUCTIONS:**
 
  1. Download / Clone the repository.
- 2. Move inside the repository folder and run the following command “pip install –r requirements.txt”
+ 2. Move inside the repository folder and run the following command “python3 -m pip install -r requirements.txt”
  3. Update config file with mongo db details “shield.conf”
- 4. Start the application by running the “shield” file present in the bin directory (e.g python shield)
+ 4. Start the application by running the “shield” file present in the bin directory (e.g. python3 bin/shield)
  
  **DOCKER:**
  1. INSTALL DOCKER AND DOCKER-COMPOSE, refer official docker installation page for installing docker and docker-compose.
